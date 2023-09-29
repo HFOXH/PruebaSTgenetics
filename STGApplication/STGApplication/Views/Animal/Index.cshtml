@@ -1,65 +1,197 @@
-﻿@model IEnumerable<STGApplication.Models.Animal>
+﻿@using STGApplication.Data;
+@model Pagination<Animal>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div style="display:flex;justify-content: space-between;align-items: flex-start;">
+    <h1 class="text-center">Animals</h1>
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Add a new Animal</a>
+    </p>
+</div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<form asp-controller="Animals" asp-action="Index">
+    <p>
+        Search: <input type="text" name="buscar" value="@ViewData["ActualFilter"]" class="form-text" />
+        <input type="submit" value="Filter" class="btn btn-sm btn-dark" />
+        <a asp-action="Index" class="btn btn-outline-info">Complete List</a>
+    </p>
+</form>
+
+<table class="table table-striped">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Breed)
+            <th scope="col">
+                <a asp-action="Index" asp-route-actualOrder="@ViewData["FilterName"]" asp-route-actualFilter="@ViewData["ActualFilter"]">
+                    Name
+                </a>
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BirthDate)
+            <th scope="col">
+                <a asp-action="Index" asp-route-actualOrder="@ViewData["FilterBreed"]" asp-route-actualFilter="@ViewData["ActualFilter"]">
+                    Breed
+                </a>
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sex)
+            <th scope="col">
+                <a asp-action="Index" asp-route-actualOrder="@ViewData["FilterDate"]" asp-route-actualFilter="@ViewData["ActualFilter"]">
+                    Date Birth
+                </a>
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
+            <th scope="col">
+                <a asp-action="Index" asp-route-actualOrder="@ViewData["FilterSex"]" asp-route-actualFilter="@ViewData["ActualFilter"]">
+                    Sex
+                </a>
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
+            <th scope="col">
+                <a asp-action="Index" asp-route-actualOrder="@ViewData["FilterPrice"]" asp-route-actualFilter="@ViewData["ActualFilter"]">
+                    Price
+                </a>
+            </th>
+            <th scope="col">
+                <a asp-action="Index" asp-route-actualOrder="@ViewData["FilterStatus"]" asp-route-actualFilter="@ViewData["ActualFilter"]">
+                    Status
+                </a>
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Breed)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BirthDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sex)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.AnimalId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.AnimalId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.AnimalId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <input class="form-check-input" type="checkbox" value="@item.AnimalId" id="checkbox-@item.AnimalId">
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Breed)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BirthDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Sex)
+                </td>
+                <td id="price-@item.AnimalId">
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.AnimalId" class="btn btn-warning">Editar</a>
+                    <a asp-action="Delete" asp-route-id="@item.AnimalId" class="btn btn-danger">Eliminar</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+<div>
+    <p><b>Total Price: @ViewBag.TotalPrice</b></p>
+</div>
+<div class="card" style="width: 18rem;">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>Total Purchase Amount: </b><span id="total-amount"></span></td>
+            </tr>
+            <tr>
+                <td><b>Discount Percentage: </b><span id="discount-percentage"></span></td>
+            </tr>
+            <tr>
+                <td><b>Shipping Amount: </b><span id="shipping-amount"></span></td>
+            </tr>
+        </tbody>
+    </table>
+</div><br />
+<script>
+    var selectedAnimals = [];
+
+    $(document).ready(function () {
+        $('input[type="checkbox"]').change(function () {
+            updateSummary();
+        });
+        restoreSelections();
+        updateSummary();
+    });
+
+    function updateSummary() {
+        var selectedAnimals = [];
+        var totalAmount = 0;
+        var discountPercentage = 0;
+        var shippingAmount = 0;
+
+        $('input[type="checkbox"]:checked').each(function () {
+            var animalId = $(this).val();
+            var animalPrice = parseFloat($('#price-' + animalId).text());
+
+            selectedAnimals.push({
+                id: animalId,
+                price: animalPrice
+            });
+
+            totalAmount += animalPrice;
+            if (selectedAnimals.length > 5) {
+                discountPercentage = 5;
+            }
+        });
+
+        if (selectedAnimals.length > 10) {
+            discountPercentage += 3;
+        }
+
+        if (selectedAnimals.length > 20) {
+            shippingAmount = 0;
+        } else {
+            shippingAmount = 1000;
+        }
+
+        // Update the table summarize
+        var summaryTable = $('#selected-animals');
+        summaryTable.empty();
+
+        $.each(selectedAnimals, function (index, animal) {
+            summaryTable.append('<tr><td>Animal ' + animal.id + '</td><td>$' + animal.price.toFixed(2) + '</td></tr>');
+        });
+
+        // Update the values
+        $('#total-amount').text('$' + totalAmount.toFixed(2));
+        $('#discount-percentage').text(discountPercentage + '%');
+        $('#shipping-amount').text('$' + shippingAmount.toFixed(2));
+    }
+</script>
+
+@{
+    var anteriordeshabilitado = !Model.BeforePages ? "disabled" : "";
+    var siguientedeshabilitado = !Model.AfterPages ? "disabled" : "";
+}
+
+<div>
+    <a asp-action="Index" asp-route-buscar="@ViewData["ActualFilter"]" asp-route-actualOrder="@ViewData["ActualOrder"]"
+       asp-route-numpag="@(Model.MainPage - 1)" asp-route-actualFilter="@ViewData["ActualFilter"]"
+       class="btn btn-primary @anteriordeshabilitado">Previous</a>
+
+    @for (var i = 1; i <= Model.TotalPages; i++)
+    {
+        var actualPage = (i == Model.MainPage) ? "active" : "";
+        <a asp-action="Index" asp-route-buscar="@ViewData["ActualFilter"]" asp-route-actualOrder="@ViewData["ActualOrder"]"
+           asp-route-numpag="@i" asp-route-actualFilter="@ViewData["ActualFilter"]"
+           class="btn btn-primary @actualPage">@i</a>
+    }
+
+    <a asp-action="Index" asp-route-buscar="@ViewData["ActualFilter"]" asp-route-actualOrder="@ViewData["ActualOrder"]"
+       asp-route-numpag="@(Model.MainPage + 1)" asp-route-actualFilter="@ViewData["ActualFilter"]"
+       class="btn btn-primary @siguientedeshabilitado">Next</a>
+
+</div>

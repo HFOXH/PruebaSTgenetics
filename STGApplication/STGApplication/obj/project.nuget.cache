@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "2qLDVqu6iUTbg2njVMTwkqx9N9vv/6VGMOCCtfFxsI+2/V89y6ev2/8hGUDa1vP4Wnfhu2GGuPJIb+DNzzSZCQ==",
+  "dgSpecHash": "rzVUVJ+IA0ZzowJ3w9pu9EQPRHpsAuvu+pvhUAe7OJjucRrbXHHmo289RJ6QB4mJomryLc3LR+tbn9Q+M9xfRw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Santiago P\\Desktop\\STGen\\STGApplication\\STGApplication\\STGApplication.csproj",
+  "projectFilePath": "C:\\Users\\Santiago P\\Documents\\GitHub\\PruebaSTgenetics\\STGApplication\\STGApplication\\STGApplication.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Santiago P\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\Santiago P\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

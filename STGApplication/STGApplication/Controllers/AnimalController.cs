@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -18,14 +19,83 @@ namespace STGApplication.Controllers
         {
             _context = context;
         }
+        //GET: Animals
+        public async Task<IActionResult> Index(string buscar, string actualOrder, int? numpag, string actualFilter) {
+
+            var animals = from animal in _context.animal select animal;
+            if (buscar != null)
+                numpag = 1;
+            else
+                buscar = actualFilter;
+
+            if (!String.IsNullOrEmpty(buscar)){
+                animals = animals.Where(a => a.Name!.Contains(buscar));
+            }
+            ViewData["ActualOrder"] = actualOrder;
+            ViewData["ActualFilter"] = actualFilter;
+
+            ViewData["FilterName"] = String.IsNullOrEmpty(actualOrder) ? "NameDescendent" : "";
+            ViewData["FilterBreed"] = String.IsNullOrEmpty(actualOrder) ? "BreedDescendent" : "BreedAscendent";
+            ViewData["FilterSex"] = String.IsNullOrEmpty(actualOrder) ? "SexDescendent" : "SexAscendent";
+            ViewData["FilterPrice"] = String.IsNullOrEmpty(actualOrder) ? "PriceDescendent" : "PriceAscendent";
+            ViewData["FilterStatus"] = String.IsNullOrEmpty(actualOrder) ? "StatusDescendent" : "StatusAscendent";
+            ViewData["FilterDate"] = actualOrder == "DateAscendent" ? "DateDescendent" : "DateAscendent";
+
+            switch (actualOrder)
+            {
+                case "NameDescendent":
+                    animals = animals.OrderByDescending(animal => animal.Name);
+                    break;
+                case "BreedDescendent":
+                    animals = animals.OrderByDescending(animal => animal.Breed);
+                    break;
+                case "BreedAscendent":
+                    animals = animals.OrderBy(animal => animal.Breed);
+                    break;
+                case "SexDescendent":
+                    animals = animals.OrderByDescending(animal => animal.Sex);
+                    break;
+                case "SexAscendent":
+                    animals = animals.OrderBy(animal => animal.Sex);
+                    break;
+                case "PriceDescendent":
+                    animals = animals.OrderByDescending(animal => animal.Price);
+                    break;
+                case "PriceAscendent":
+                    animals = animals.OrderBy(animal => animal.Price);
+                    break;
+                case "StatusDescendent":
+                    animals = animals.OrderByDescending(animal => animal.Status);
+                    break;
+                case "StatusAscendent":
+                    animals = animals.OrderBy(animal => animal.Status);
+                    break;
+                case "DateDescendent":
+                    animals = animals.OrderByDescending(animal => animal.BirthDate);
+                    break;
+                case "DateAscendent":
+                    animals = animals.OrderBy(animal => animal.BirthDate);
+                    break;
+
+                default:
+                    animals = animals.OrderBy(animal => animal.Name);
+                    break;
+            }
+            decimal totalSum = animals.Sum(a => a.Price);
+            ViewBag.TotalPrice = totalSum;
+
+            int cantData = 10;
+
+            return View(await Pagination<Animal>.MakePagination(animals.AsNoTracking(), numpag??1, cantData));
+        }
 
         // GET: Animal
-        public async Task<IActionResult> Index()
-        {
-              return _context.animal != null ? 
-                          View(await _context.animal.ToListAsync()) :
-                          Problem("Entity set 'DBContext.animal'  is null.");
-        }
+        //public async Task<IActionResult> Index()
+        //{
+        //      return _context.animal != null ? 
+        //                  View(await _context.animal.ToListAsync()) :
+        //                  Problem("Entity set 'DBContext.animal'  is null.");
+        //}
 
         // GET: Animal/Details/5
         public async Task<IActionResult> Details(int? id)

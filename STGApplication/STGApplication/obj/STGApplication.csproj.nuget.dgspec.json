@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Santiago P\\Desktop\\STGen\\STGApplication\\STGApplication\\STGApplication.csproj": {}
+    "C:\\Users\\Santiago P\\Documents\\GitHub\\PruebaSTgenetics\\STGApplication\\STGApplication\\STGApplication.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Santiago P\\Desktop\\STGen\\STGApplication\\STGApplication\\STGApplication.csproj": {
+    "C:\\Users\\Santiago P\\Documents\\GitHub\\PruebaSTgenetics\\STGApplication\\STGApplication\\STGApplication.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Santiago P\\Desktop\\STGen\\STGApplication\\STGApplication\\STGApplication.csproj",
+        "projectUniqueName": "C:\\Users\\Santiago P\\Documents\\GitHub\\PruebaSTgenetics\\STGApplication\\STGApplication\\STGApplication.csproj",
         "projectName": "STGApplication",
-        "projectPath": "C:\\Users\\Santiago P\\Desktop\\STGen\\STGApplication\\STGApplication\\STGApplication.csproj",
+        "projectPath": "C:\\Users\\Santiago P\\Documents\\GitHub\\PruebaSTgenetics\\STGApplication\\STGApplication\\STGApplication.csproj",
         "packagesPath": "C:\\Users\\Santiago P\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Santiago P\\Desktop\\STGen\\STGApplication\\STGApplication\\obj\\",
+        "outputPath": "C:\\Users\\Santiago P\\Documents\\GitHub\\PruebaSTgenetics\\STGApplication\\STGApplication\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
